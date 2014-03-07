@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-SnapShop::Application.config.secret_key_base = 'ef10ddbe48afaa5d0397143619c67b958e7fc807018d74bc4e8650e410bbcf49e8d568c20d2c5ab43e404e51c599b66b86d87e6f4b76a971927cdef8099799a5'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+SnapShop::Application.config.secret_key_base = secure_token
